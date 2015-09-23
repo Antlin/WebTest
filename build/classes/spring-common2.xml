@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+            http://www.springframework.org/schema/tx 
+            http://www.springframework.org/schema/tx/spring-tx-3.2.xsd
+            http://www.springframework.org/schema/context  
+     	   http://www.springframework.org/schema/context/spring-context.xsd  
+     	   http://www.springframework.org/schema/aop 
+     	   http://www.springframework.org/schema/aop/spring-aop-3.2.xsd
+           http://www.springframework.org/schema/mvc  
+           http://www.springframework.org/schema/mvc/spring-mvc-3.2.xsd">
+	<!-- 配置hibernate的sessionFactory
+		里面有属性:dataSuorce 连接数据源ref
+				取得数据源后和数据库打交道的方式属性：hibernateProperties:prop:里面用Map存键值<prop key="">value</prop>
+																	hibernate.dialect：数据库类型
+																	hibernate.hbm2ddl.auto：自动生成DDL的方式
+																	hibernate.show_sql：是否展示sql语句
+																	hibernate.format_sql是否用数据库规定的方式
+				
+				mappingResuorces:映射文件的读取:装list里面，value=项目下的映射文件路径<list><value>com/foreveross/ssh/entity/User.hbm.xml</value></list>
+	
+	配置切入表达式<tx:advice id="transactionAdvice" transaction-manager="transactionManager">
+				 	<tx:attributes>
+				 		<tx:method name="*" propagation="REQUIRED"/>
+				 	</tx:attributes>
+				 </tx:advice> 
+	配置切入点<aop:config>
+	 			<aop:advisor advice-ref="transactionAdvice" pointcut="execution(* com.foreveross.ssh.service.UserService.*(..))"/>
+			</aop:config>
+	 -->
+	<bean id="dataSuorces" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<property name="driverClassName" value="oracle.jdbc.OracleDirver"/>
+		<property name="url" value="jdbc:oracl:thin:@loaclhost:1521:orcl"/>
+		<property name="name" value="scott"/>
+		<property name="password" value="123"/>
+	</bean>
+	<bean id="sessionFactory" class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
+		<property name="dataSuorces" ref="dataSuorce"/>
+		<property name="hibernateProperties">
+			<props>
+				<prop key="hibernate.dialect">org.hibernate.dialect.Oracle10gDialect</prop>
+				<prop key="hibernate.hbm2ddl.auto">update</prop>
+				<prop key="hibernate.show_sql">true</prop>
+			</props>
+		</property>
+		<property name="mappingResuoces" >
+			<list>
+				<value>com/...../User.hbm.xml</value>
+			</list>
+		</property>
+	</bean>
+	<bean id="transactionManager" class="org.springframework.orm.hibernate3.HibernateTransactionManager">
+		<property name="sessionFactory" ref="sessionFactory" />
+	</bean>
+	<tx:advice id="transactionAdvice" transaction-manager="transactionManager">
+		<tx:attributes>
+			<tx:method name="*" propagation="REQUIRED"/>
+		</tx:attributes>
+	</tx:advice>
+	<aop:config>
+		<aop:advisor advice-ref="transactionAdvice" pointcut="execution(* com....UserService.*(..))"/>
+	</aop:config>
+</beans>

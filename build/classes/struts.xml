@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.3//EN"
+    "http://struts.apache.org/dtds/struts-2.3.dtd">
+    <struts>
+	<package name="user"  extends="struts-default">
+    		<action name="*_user" class="ActionClass" method="{1}">
+    		<result name="add" type="redirect">findAll_user.action</result>
+    		<result name="list">user_list.jsp</result>
+    		<result name="delete"></result>
+    		</action>
+    	</package>
+    </struts> 
